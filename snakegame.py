@@ -28,10 +28,25 @@ clock = pygame.time.Clock()
 snake_list = []
 initial_length = 5
 
+die = False
+
 
 def aumenta_cobra(lista_cobra):
     for XeY in lista_cobra:
         pygame.draw.rect(screen,(50, 255, 80),(XeY[0], XeY[1], 20, 20))
+
+def restart_game():
+    global points, initial_length, x_snake, y_snake, list_of_snake, snake_list, x_apple, y_apple, die
+
+    points = 0
+    initial_length = 5
+    x_snake = width // 2
+    y_snake = height // 2
+    list_of_snake = []
+    snake_list = []
+    x_apple = randint(40, 600)
+    y_apple = randint(50, 430)
+    die = False
 
 
 while True:
@@ -88,6 +103,37 @@ while True:
     list_of_snake.append(y_snake)
 
     snake_list.append(list_of_snake)
+
+    if snake_list.count(list_of_snake) > 1:
+        font_game_over = pygame.font.SysFont('lucidasans', 20, True, False)
+        message_game_over = 'Game Over! Pressione R para reiniciar'
+        text_game_over = font_game_over.render(message_game_over, True, (204, 255, 255))
+        ret_text_game_over = text_game_over.get_rect()
+        
+        die = True
+        while die:
+            screen.fill((0, 0, 0))
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_r:
+                        restart_game()
+
+            ret_text_game_over.center = (width // 2, height // 2)
+            screen.blit(text_game_over, ret_text_game_over)
+            pygame.display.update()
+
+    if x_snake > width:
+        x_snake = 0
+    if x_snake < 0:
+        x_snake = width
+    if y_snake > height:
+        y_snake = 0
+    if y_snake < 0:
+        y_snake = height
+
 
     if len(snake_list) > initial_length:
         del snake_list[0]
